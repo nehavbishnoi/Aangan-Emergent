@@ -5,6 +5,7 @@ import { IMG } from '@/lib/images';
 import { joinWaitlist } from '@/lib/api';
 import { toast } from 'sonner';
 import TraditionCardMockup from '@/components/TraditionCardMockup';
+import GiftAangan from '@/components/GiftAangan';
 
 const FiveQ = [
   { n: '01', t: 'What do we do?', d: 'Traditions, celebrations, recipes, customs, and family rituals.' },
@@ -33,6 +34,7 @@ export default function Landing() {
       <AISection />
       <Privacy />
       <UseCases />
+      <GiftAangan />
       <FinalCTA />
     </div>
   );

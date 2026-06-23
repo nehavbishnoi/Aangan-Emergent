@@ -2,8 +2,7 @@
 // Verified-loading URLs for editorial family-culture aesthetic.
 
 export const IMG = {
-  heroFamily:
-    'https://images.pexels.com/photos/5402587/pexels-photo-5402587.jpeg?auto=compress&cs=tinysrgb&w=1600',
+  heroFamily: '/generated/hero-family.jpg',
   celebration:
     'https://images.pexels.com/photos/7685732/pexels-photo-7685732.jpeg?auto=compress&cs=tinysrgb&w=1600',
   cooking:

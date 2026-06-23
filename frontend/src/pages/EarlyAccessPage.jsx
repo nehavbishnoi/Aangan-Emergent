@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { ArrowRight, ShieldCheck } from 'lucide-react';
 import { joinWaitlist } from '@/lib/api';
 import { toast } from 'sonner';
+import GiftAangan from '@/components/GiftAangan';
 
 export default function EarlyAccessPage() {
   const [form, setForm] = useState({ name: '', email: '', family_role: '', note: '' });
@@ -83,6 +84,10 @@ export default function EarlyAccessPage() {
             </div>
           )}
         </div>
+      </div>
+
+      <div className="mt-24">
+        <GiftAangan />
       </div>
     </div>
   );
