@@ -1,0 +1,101 @@
+{
+  "project_name": "Aangan",
+  "domain": "Private AI-powered family culture and legacy platform",
+  "theme_and_archetype": {
+    "theme": "LIGHT",
+    "archetype": "Archetype 1 (Organic & Earthy) infused with Archetype 5 (Luxury)",
+    "description": "Warm, intimate, premium editorial feel. Like a modern, global Indian family home or a luxury family memoir magazine. No religious or generic tech SaaS elements."
+  },
+  "typography": {
+    "rules": {
+      "headings": "Elegant serif typography for emotional headlines. Use Cormorant Garamond, Playfair Display, or Spectral. Apply tight tracking (tracking-tight) for large headers.",
+      "body": "Clean modern sans-serif typography for body copy. Use Outfit, Manrope, or Satoshi. Must have generous line-height (leading-relaxed).",
+      "labels": "Uppercase, wide letter spacing (tracking-widest) for overlines and small labels."
+    },
+    "scales": {
+      "h1": "text-4xl md:text-5xl lg:text-6xl tracking-tight leading-none",
+      "h2": "text-3xl md:text-4xl lg:text-5xl tracking-tight",
+      "h3": "text-2xl md:text-3xl",
+      "h4": "text-xl md:text-2xl",
+      "body": "text-base md:text-lg leading-relaxed",
+      "small": "text-sm tracking-wide"
+    },
+    "fonts_to_install": [
+      "Cormorant Garamond",
+      "Outfit"
+    ]
+  },
+  "color_palette": {
+    "background": {
+      "primary": "#FDFBF7", 
+      "secondary": "#F5F2EB",
+      "description": "Warm ivory or soft sand backgrounds."
+    },
+    "text": {
+      "primary": "#1C1C1C",
+      "secondary": "#1B2A22",
+      "description": "Deep charcoal or dark forest-green text."
+    },
+    "accents": {
+      "terracotta": "#C87961",
+      "marigold": "#E6A65D",
+      "sage": "#8E9B82",
+      "indigo": "#2C365E",
+      "gold": "#D4AF37",
+      "description": "Muted, organic accent colors to be used sparingly for borders, highlights, or small icons."
+    },
+    "rules": "Avoid pure black and pure white. Avoid generic tech gradients. Use a subtle CSS noise texture overlay to create a soft paper grain effect."
+  },
+  "layout_and_spacing": {
+    "spacing_system": "Generous spacing philosophy. Use p-8, p-12, p-16, p-24, py-32. Elements must breathe. AVOID excessive cards and clutter.",
+    "alignment": "Left-align dense text. Headlines can be center-aligned if it creates a strong editorial composition. Asymmetry is encouraged to mimic magazine layouts.",
+    "grid_strategy": "Editorial multi-column grids. Use offset images and overlapping text. Example: grid-cols-1 md:grid-cols-12 with wide gaps (gap-8 to gap-16).",
+    "surface_strategy": "Minimal borders (border-black/5 or border-[#2A312B]/10). Soft, diffuse shadows only where necessary to lift elements. Use flat rectangular layouts, no heavy rounded cards."
+  },
+  "components": {
+    "strategy": "Custom HTML/Tailwind for marketing layout. Shadcn/UI for interactive forms, waitlist, and clickable mockups (heavily customized to match the editorial aesthetic).",
+    "navigation": "Glassmorphism or solid warm background. Must include: Home, How It Works, The Family Archive, Privacy, For Families, Early Access. CTA: Begin Your Archive.",
+    "buttons": "Elegant, understated. Use dark forest-green or charcoal background with warm ivory text. Add a subtle hover effect (opacity change or slow translation). No heavy shadows.",
+    "cards": "Avoid standard SaaS cards. Use fine lines, 1px subtle borders, no background color change, or simply rely on proximity and negative space.",
+    "icons": "Use 'lucide-react' or '@phosphor-icons/react' (light/thin weight). Keep them minimal."
+  },
+  "motion_and_interaction": {
+    "strategy": "Slow, cinematic, and deliberate. Nothing should feel 'bouncy' or 'fast'.",
+    "hover_states": "Subtle color shifts, slow opacity fades (duration-300 or 500).",
+    "scroll": "Consider adding smooth scroll (Lenis) if possible. Fade-in up for text blocks, slow parallax for images."
+  },
+  "media": {
+    "strategy": "Candid, intimate, multigenerational photography. No corporate SaaS illustrations.",
+    "image_urls": {
+      "hero_or_emotional": {
+        "url": "https://images.pexels.com/photos/5402587/pexels-photo-5402587.jpeg",
+        "description": "Cheerful family sitting on the grass, enjoying time outdoors together in a serene park. Use in Hero or Emotional Use-Cases section."
+      },
+      "celebration": {
+        "url": "https://images.pexels.com/photos/7685732/pexels-photo-7685732.jpeg",
+        "description": "Group of people joyfully celebrating outdoors in vibrant traditional Indian clothing. Use for 'Our Traditions' or 'Our Diwali Morning' mockup context."
+      },
+      "cooking_together": {
+        "url": "https://images.pexels.com/photos/7469438/pexels-photo-7469438.jpeg",
+        "description": "A family preparing a meal together in their kitchen. Use for 'Our Table' or family recipe feature section."
+      },
+      "archival_memory": {
+        "url": "https://images.unsplash.com/photo-1553009902-3a450a9609ab",
+        "description": "Photo of man with gray frame held by hand. Use for 'Our Roots' or problem section (fragments of memory)."
+      }
+    }
+  },
+  "testing": {
+    "rules": "All interactive and key informational elements MUST include a 'data-testid' attribute using kebab-case, role-based naming convention (e.g., 'data-testid=\"waitlist-submit-button\"')."
+  },
+  "instructions_to_main_agent": [
+    "Build the UI using React, Tailwind CSS, and Shadcn UI (.js/.jsx files).",
+    "Create a soft paper grain effect using a fixed CSS background with low-opacity noise, or apply a subtle SVG noise filter to the body.",
+    "Structure the landing page with the following sections: Hero (with Family Tradition Card mockup), Problem section, Five questions, Product experience, Feature showcase, AI section, Privacy, Emotional use-cases, Final CTA.",
+    "Include a separate clickable mockups area or pages for: Family Tradition Card, Grandmother voice-note story, Family calendar, Ask Aangan AI chat (mocking Claude Sonnet 4.5), Family recipe card, My Aangan dashboard.",
+    "Ensure the Ask Aangan AI demo feels live and interactive.",
+    "Implement the waitlist saving to a mocked database (or local storage for the demo).",
+    "Strictly follow the color palette (Warm ivory, Charcoal/Forest-green, terracotta/marigold/sage accents). No BANNED elements like saffron-heavy or marketplace visuals.",
+    "Apply data-testid to every button, form input, and key navigation link."
+  ]
+}
