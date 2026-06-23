@@ -86,13 +86,11 @@ function Hero() {
             <img
               src={IMG.heroFamily}
               alt="A family together"
-              className="w-full h-[520px] object-cover grayscale-[10%]"
+              className="w-full h-[440px] md:h-[480px] object-cover grayscale-[10%]"
             />
-            <div className="absolute -bottom-10 -left-10 hidden md:block">
-              <TraditionCardMockup />
-            </div>
           </div>
-          <div className="md:hidden mt-10 flex justify-center">
+          {/* Card sits BELOW the image. No image overlap. Aligned to the left of the visual column. */}
+          <div className="mt-10 flex justify-center lg:justify-start relative z-10">
             <TraditionCardMockup />
           </div>
         </div>
