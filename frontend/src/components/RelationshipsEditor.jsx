@@ -80,7 +80,7 @@ export default function RelationshipsEditor({ value, onChange, others, subjectNa
       </div>
 
       {/* Extended relations (Indian-specific) */}
-      <div className="border border-black/10 bg-[hsl(var(--aangan-ivory))]">
+      <div className="border border-black/10 bg-[hsl(var(--aangan-ivory))]" data-testid="rel-bucket-extended_relations">
         <div className="flex items-center justify-between px-4 py-2.5 border-b border-black/5">
           <p className="eyebrow">Other relations &middot; <span className="text-[hsl(var(--aangan-forest))]/55 lowercase tracking-normal text-[11px]">Chacha, Chachi, Bua, Mama, Dadi, Nani, cousins, in-laws&hellip;</span></p>
           <button type="button" onClick={() => setPicker({ bucket: 'extended_relations' })} data-testid="rel-add-extended_relations" className="inline-flex items-center gap-1 text-[12px] px-2 py-1 hover:text-[hsl(var(--aangan-terracotta))]">
@@ -89,8 +89,8 @@ export default function RelationshipsEditor({ value, onChange, others, subjectNa
         </div>
         <ul className="p-3 space-y-1.5 min-h-[60px]">
           {(v.extended_relations || []).length === 0 && <li className="text-[12px] text-[hsl(var(--aangan-forest))]/50 italic px-1 py-2">None yet.</li>}
-          {(v.extended_relations || []).map((er) => (
-            <li key={er.member_id + er.label} className="flex items-center gap-3 px-2 py-1.5 bg-[hsl(var(--aangan-sand))]">
+          {(v.extended_relations || []).map((er, i) => (
+            <li key={`${er.member_id}-${er.label}-${i}`} className="flex items-center gap-3 px-2 py-1.5 bg-[hsl(var(--aangan-sand))]">
               <span className="text-[12px] eyebrow text-[hsl(var(--aangan-terracotta))] w-44 truncate" title={er.label}>{er.label}</span>
               <ArrowRight size={11} className="text-[hsl(var(--aangan-forest))]/40" />
               <span className="flex-1 text-sm">{findName(er.member_id)}</span>
@@ -167,7 +167,7 @@ function PickerModal({ subjectName, bucket, others, onClose, onPick }) {
             >
               {RELATION_GROUPS.map((g) => (
                 <optgroup key={g.group} label={g.group}>
-                  {g.items.map((i) => <option key={i} value={i}>{i}</option>)}
+                  {g.items.map((i, idx) => <option key={`${g.group}-${idx}-${i}`} value={i}>{i}</option>)}
                 </optgroup>
               ))}
             </select>

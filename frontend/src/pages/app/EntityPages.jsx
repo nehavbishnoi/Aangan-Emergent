@@ -85,7 +85,7 @@ function MemberPicker({ value = [], onChange, members, multi = true, placeholder
   if (!multi) {
     return (
       <select value={value || ''} onChange={(e) => onChange(e.target.value || null)} className={sel}>
-        <option value="">— {placeholder} —</option>
+        <option value="">{`— ${placeholder} —`}</option>
         {members.map((m) => <option key={m._id} value={m._id}>{m.name}{m.relation_to_head ? ` (${m.relation_to_head})` : ''}</option>)}
       </select>
     );
@@ -390,16 +390,24 @@ export function EntityDetailPage({ apiClient, kind, backTo, render }) {
     try { await apiClient.remove(id); toast.success('Removed.'); nav(backTo); }
     catch (e) { toast.error(e.response?.data?.detail || 'Could not delete.'); }
   };
-  const canEdit = user?.role === 'head' || row.created_by === user?._id;
+  const canEdit = !!user && (user.role === 'head' || row.created_by === user._id);
 
   return (
     <div className="max-w-[1000px]" data-testid={`${kind}-detail`}>
-      <Link to={backTo} className="inline-flex items-center gap-2 text-sm text-[hsl(var(--aangan-forest))]/65"><ArrowLeft size={14}/> Back</Link>
+      <div className="flex items-center justify-between">
+        <Link to={backTo} className="inline-flex items-center gap-2 text-sm text-[hsl(var(--aangan-forest))]/65"><ArrowLeft size={14}/> Back</Link>
+        {canEdit && (
+          <div className="flex gap-2">
+            <Link to={`/app/${kind}/${id}/edit`} className="inline-flex items-center gap-1.5 px-3 py-1.5 border border-[hsl(var(--aangan-forest))]/25 text-sm" data-testid={`${kind}-edit`}><Pencil size={12}/> Edit</Link>
+            <button onClick={onDelete} className="inline-flex items-center gap-1.5 px-3 py-1.5 border border-[hsl(var(--aangan-terracotta))]/40 text-[hsl(var(--aangan-terracotta))] text-sm" data-testid={`${kind}-delete`}><Trash2 size={12}/> Delete</button>
+          </div>
+        )}
+      </div>
       {render(row)}
       {canEdit && (
-        <div className="mt-10 flex gap-3">
-          <Link to={`/app/${kind}/${id}/edit`} className="inline-flex items-center gap-1.5 px-4 py-2 border border-[hsl(var(--aangan-forest))]/25 text-sm" data-testid={`${kind}-edit`}><Pencil size={13}/> Edit</Link>
-          <button onClick={onDelete} className="inline-flex items-center gap-1.5 px-4 py-2 border border-[hsl(var(--aangan-terracotta))]/40 text-[hsl(var(--aangan-terracotta))] text-sm" data-testid={`${kind}-delete`}><Trash2 size={13}/> Delete</button>
+        <div className="mt-10 flex gap-3" data-testid={`${kind}-actions-bottom`}>
+          <Link to={`/app/${kind}/${id}/edit`} className="inline-flex items-center gap-1.5 px-4 py-2 border border-[hsl(var(--aangan-forest))]/25 text-sm"><Pencil size={13}/> Edit</Link>
+          <button onClick={onDelete} className="inline-flex items-center gap-1.5 px-4 py-2 border border-[hsl(var(--aangan-terracotta))]/40 text-[hsl(var(--aangan-terracotta))] text-sm"><Trash2 size={13}/> Delete</button>
         </div>
       )}
     </div>
