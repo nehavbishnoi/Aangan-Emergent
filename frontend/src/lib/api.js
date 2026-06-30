@@ -1,6 +1,17 @@
 import axios from 'axios';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+const TOKEN_KEY = 'aangan_token';
+
+export function getToken() {
+  return localStorage.getItem(TOKEN_KEY);
+}
+export function setToken(token) {
+  if (token) localStorage.setItem(TOKEN_KEY, token);
+}
+export function clearToken() {
+  localStorage.removeItem(TOKEN_KEY);
+}
 
 export function apiError(err, fallback = 'Something went wrong.') {
   const d = err?.response?.data?.detail;
@@ -16,6 +27,12 @@ export const api = axios.create({
   baseURL: API,
   timeout: 60000,
   withCredentials: true,
+});
+
+api.interceptors.request.use((config) => {
+  const token = getToken();
+  if (token) config.headers.Authorization = `Bearer ${token}`;
+  return config;
 });
 
 // ---------- Public ----------
