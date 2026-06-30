@@ -21,8 +21,8 @@ from motor.motor_asyncio import AsyncIOMotorClient
 from pydantic import BaseModel, Field, EmailStr, ConfigDict
 from io import BytesIO
 
-from emergentintegrations.llm.chat import LlmChat, UserMessage, TextDelta, StreamDone
-from emergentintegrations.llm.openai import OpenAISpeechToText
+import anthropic
+from openai import AsyncOpenAI
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
@@ -31,7 +31,8 @@ mongo_url = os.environ['MONGO_URL']
 client = AsyncIOMotorClient(mongo_url)
 db = client[os.environ['DB_NAME']]
 
-EMERGENT_LLM_KEY = os.environ.get('EMERGENT_LLM_KEY')
+ANTHROPIC_API_KEY = os.environ.get('ANTHROPIC_API_KEY')
+OPENAI_API_KEY = os.environ.get('OPENAI_API_KEY')
 JWT_SECRET = os.environ['JWT_SECRET']
 JWT_ALG = 'HS256'
 
@@ -728,8 +729,8 @@ async def upcoming_events(user: dict = Depends(get_current_user), days: int = 90
 @api_router.post('/transcribe')
 async def transcribe(file: UploadFile = File(...), language: Optional[str] = None,
                      user: dict = Depends(get_current_user)):
-    if not EMERGENT_LLM_KEY:
-        raise HTTPException(status_code=500, detail='LLM key not configured')
+    if not OPENAI_API_KEY:
+        raise HTTPException(status_code=503, detail='Voice transcription is not enabled yet for this family archive.')
     raw = await file.read()
     if len(raw) > 25 * 1024 * 1024:
         raise HTTPException(status_code=413, detail='Audio file too large (max 25MB)')
@@ -737,12 +738,12 @@ async def transcribe(file: UploadFile = File(...), language: Optional[str] = Non
     bio = BytesIO(raw)
     bio.name = file.filename or 'audio.webm'
 
-    stt = OpenAISpeechToText(api_key=EMERGENT_LLM_KEY)
+    client_oa = AsyncOpenAI(api_key=OPENAI_API_KEY)
     try:
         kwargs = {'file': bio, 'model': 'whisper-1', 'response_format': 'verbose_json'}
         if language:
             kwargs['language'] = language
-        resp = await stt.transcribe(**kwargs)
+        resp = await client_oa.audio.transcriptions.create(**kwargs)
         return {
             'text': getattr(resp, 'text', '') or '',
             'language': getattr(resp, 'language', None),
@@ -801,23 +802,24 @@ async def _build_family_context(user: dict) -> str:
 
 @api_router.post('/ask/stream')
 async def ask_stream(payload: AskRequest, user: dict = Depends(get_current_user)):
-    if not EMERGENT_LLM_KEY:
-        raise HTTPException(status_code=500, detail='LLM key not configured')
+    if not ANTHROPIC_API_KEY:
+        raise HTTPException(status_code=503, detail='Ask Aangan is not enabled yet for this family archive.')
     ctx = await _build_family_context(user)
     system = ASK_AANGAN_SYSTEM_BASE + '\n\n' + ctx
-    chat = LlmChat(api_key=EMERGENT_LLM_KEY,
-                   session_id=payload.session_id or str(uuid.uuid4()),
-                   system_message=system).with_model('anthropic', 'claude-sonnet-4-5-20250929')
+    client_ai = anthropic.AsyncAnthropic(api_key=ANTHROPIC_API_KEY)
 
     async def gen():
         try:
-            async for ev in chat.stream_message(UserMessage(text=payload.question)):
-                if isinstance(ev, TextDelta):
-                    safe = ev.content.replace('\n', '\\n')
+            async with client_ai.messages.stream(
+                model='claude-sonnet-4-6',
+                max_tokens=1024,
+                system=system,
+                messages=[{'role': 'user', 'content': payload.question}],
+            ) as stream:
+                async for text in stream.text_stream:
+                    safe = text.replace('\n', '\\n')
                     yield f"data: {safe}\n\n"
-                elif isinstance(ev, StreamDone):
-                    yield 'data: [DONE]\n\n'
-                    break
+            yield 'data: [DONE]\n\n'
         except Exception as e:  # noqa: BLE001
             logger.exception('Ask stream error')
             yield f'data: [ERROR] {e}\n\n'
@@ -832,22 +834,21 @@ async def ask_stream(payload: AskRequest, user: dict = Depends(get_current_user)
 # Public demo endpoint (no auth) for the landing-page mockup
 @api_router.post('/ask-demo')
 async def ask_demo(payload: AskRequest):
-    if not EMERGENT_LLM_KEY:
-        raise HTTPException(status_code=500, detail='LLM key not configured')
+    if not ANTHROPIC_API_KEY:
+        raise HTTPException(status_code=503, detail='Ask Aangan is not enabled yet.')
     demo_ctx = """Family: Sharma family, Jaipur roots.
 Members: Nani (b. 1948, grandmother), Papa, Maa, Riya (daughter), Aarav (6yo grandson).
 Recorded stories include: "Our Diwali Morning" by Nani, "Holi at the old house" by Dadi, "Besan Ladoo, Nani's way" recipe by Nani."""
     system = ASK_AANGAN_SYSTEM_BASE + '\n\n' + demo_ctx
-    chat = LlmChat(api_key=EMERGENT_LLM_KEY,
-                   session_id=payload.session_id or str(uuid.uuid4()),
-                   system_message=system).with_model('anthropic', 'claude-sonnet-4-5-20250929')
-    chunks = []
-    async for ev in chat.stream_message(UserMessage(text=payload.question)):
-        if isinstance(ev, TextDelta):
-            chunks.append(ev.content)
-        elif isinstance(ev, StreamDone):
-            break
-    return {'answer': ''.join(chunks)}
+    client_ai = anthropic.AsyncAnthropic(api_key=ANTHROPIC_API_KEY)
+    resp = await client_ai.messages.create(
+        model='claude-sonnet-4-6',
+        max_tokens=1024,
+        system=system,
+        messages=[{'role': 'user', 'content': payload.question}],
+    )
+    answer = ''.join(block.text for block in resp.content if block.type == 'text')
+    return {'answer': answer}
 
 
 # ============================================================================
