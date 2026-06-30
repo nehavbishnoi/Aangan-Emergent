@@ -67,14 +67,14 @@ def set_auth_cookie(response: Response, token: str) -> None:
         value=token,
         httponly=True,
         secure=True,
-        samesite='lax',
+        samesite='none',
         max_age=14 * 24 * 3600,
         path='/',
     )
 
 
 def clear_auth_cookie(response: Response) -> None:
-    response.delete_cookie(key='access_token', path='/')
+    response.delete_cookie(key='access_token', path='/', samesite='none', secure=True)
 
 
 async def get_current_user(request: Request) -> dict:
